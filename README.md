@@ -14,9 +14,9 @@ make the program into an .exe with: "pyinstaller PTZcontroller.py --onefile"
 - the PTZ snapshot API has some issues, could become unresponsive after a couple calls
 
 ### API list:
-- http://localhost:8000/api/preset/set?cam=<cam-number>&preset=<preset-number>
-- http://localhost:8000/api/preset/save?cam=<cam-number>&preset=<preset-number>
-- http://localhost:8000/api/cam/set?cam=<cam-number>
+- http://localhost:8000/api/preset/set?cam=(cam-number)&preset=(preset-number)
+- http://localhost:8000/api/preset/save?cam=(cam-number)&preset=(preset-number)
+- http://localhost:8000/api/cam/set?cam=(cam-number)
 - http://localhost:8000/api/preview-to-programm
 
 
