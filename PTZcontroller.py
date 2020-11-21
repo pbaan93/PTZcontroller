@@ -25,7 +25,7 @@ PTZ_3_IP = os.getenv('PTZ_3_IP')
 # print(PTZ_3_IP)
 
 photoSize = (120, 80)
-#photoSize = (277, 173)
+#photoSize = (240, 160)
 
 previewCam = 0
 liveCam = 0
@@ -126,7 +126,7 @@ class apiHandler(BaseHTTPRequestHandler):
 			else:
 				response = "forgot vars"
 
-		elif (path=="/api/preview-to-programm"):
+		elif (path=="/api/preview-to-program"):
 			
 			list_cams[liveCam-1].removeHighlighted()
 			liveCam = previewCam

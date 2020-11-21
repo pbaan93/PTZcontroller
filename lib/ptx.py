@@ -5,16 +5,16 @@ class PTZPostAPI:
 		self.ipAddress = ipAddress
 
 	def saveSnapshot(self, presetNr):
-		image_url = "http://"+self.ipAddress+"/snapshot.jpg"
-		#image_url = "https://cdn.pixabay.com/photo/2018/03/02/10/03/wildlife-3192772_960_720.jpg"
+		#url = "http://"+self.ipAddress+"/snapshot.jpg"
+		url = "https://cdn.pixabay.com/photo/2018/03/02/10/03/wildlife-3192772_960_720.jpg"
 
 		try:
 			# Open the url image, set stream to True, this will return the stream content.
-			r = requests.get(image_url, stream = True, timeout=0.5)
+			r = requests.get(url, stream = True, timeout=0.5)
 		except requests.exceptions.Timeout:
-			print('Timeout. Image Couldn\'t be retreived from: '+ image_url)
+			print('Timeout. Image Couldn\'t be retreived from: '+ url)
 		except:
-			print('Someting weird happend. Image Couldn\'t be retreived from: '+ image_url)
+			print('Someting weird happend. Image Couldn\'t be retreived from: '+ url)
 		else:
 			# Check if the image was retrieved successfully
 			if r.status_code == 200:
@@ -25,13 +25,13 @@ class PTZPostAPI:
 			    with open("previews"+str(self.camNr)+"/"+str(presetNr)+".jpg",'wb') as f:
 			        shutil.copyfileobj(r.raw, f)
 			        
-			    print('Image sucessfully Downloaded: ',image_url, " Saved as:", str(presetNr)+".jpg")
+			    print('Image sucessfully Downloaded: ',url, " Saved as:", str(presetNr)+".jpg")
 			else:
-			    print('Image Couldn\'t be retreived from: '+ image_url)
+			    print('Image Couldn\'t be retreived from: '+ url)
 
 	def disableAutofocus(self):
-		url = "http://"+self.ipAddress+"/cgi-bin/param.cgi?ptzcmd&lock_mfocus"
-		#url = "https://cdn.pixabay.com/photo/2018/03/02/10/03/wildlife-3192772_960_720.jpg"
+		#url = "http://"+self.ipAddress+"/cgi-bin/param.cgi?ptzcmd&lock_mfocus"
+		url = "https://cdn.pixabay.com/photo/2018/03/02/10/03/wildlife-3192772_960_720.jpg"
 
 		try:
 			# Open the url image, set stream to True, this will return the stream content.
@@ -48,8 +48,8 @@ class PTZPostAPI:
 			    print('Image Couldn\'t be retreived from: '+ url)
 
 	def savePreset(self, presetNr):
-		url = "http://"+self.ipAddress+"/cgi-bin/ptzctrl.cgi?ptzcmd&posset&"+ str(presetNr)
-		#url = "https://cdn.pixabay.com/photo/2018/03/02/10/03/wildlife-3192772_960_720.jpg"
+		#url = "http://"+self.ipAddress+"/cgi-bin/ptzctrl.cgi?ptzcmd&posset&"+ str(presetNr)
+		url = "https://cdn.pixabay.com/photo/2018/03/02/10/03/wildlife-3192772_960_720.jpg"
 
 		try:
 			# Open the url image, set stream to True, this will return the stream content.

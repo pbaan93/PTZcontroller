@@ -25,7 +25,7 @@ class camFrame:
         self.presetProgramm = 0
 
         for i in range(self.presets):
-            presetImageWatcher1 = presetImageWatcher(i,self.camNr)
+            presetImageWatcher1 = presetImageWatcher(i+1,self.camNr)
             self.presetImageWatchers.append(presetImageWatcher1)
 
         img = Image.open("white.jpg")
@@ -86,13 +86,13 @@ class camFrame:
 
     def checkPresetImage(self, presetNr):
         # print("checking update: "+ str(presetNr))
-        return self.presetImageWatchers[presetNr].changed()
+        return self.presetImageWatchers[presetNr-1].changed()
 
     def checkAndUpdatePresetImages(self):
         for presetNr in range(self.presets):
-            if(self.checkPresetImage(presetNr)):
+            if(self.checkPresetImage(presetNr+1)):
                 # print("To update: "+ str(presetNr))
-                self.updatePresetImage(presetNr)
+                self.updatePresetImage(presetNr+1)
 
     def getPresetPreview(self):
     	return self.presetPreview
