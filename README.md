@@ -16,6 +16,8 @@ make the program into an .exe with: "pyinstaller PTZcontroller.py --onefile"
 - kept PTZ recall API call separate from this program to still be able to continue using the PTZ during a livestream without this program
 
 ### API list:
+Postman: https://www.getpostman.com/collections/d09ed401964fd131d828
+
 - http://localhost:8000/api/preset/set?cam=(cam-number)&preset=(preset-number)
 - http://localhost:8000/api/preset/save?cam=(cam-number)&preset=(preset-number)
 - http://localhost:8000/api/cam/set?cam=(cam-number)

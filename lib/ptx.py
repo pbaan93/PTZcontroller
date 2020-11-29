@@ -1,3 +1,5 @@
+import requests # to get image from the web
+import shutil # to save it 
 
 class PTZPostAPI:
 	def __init__(self, camNr, ipAddress):

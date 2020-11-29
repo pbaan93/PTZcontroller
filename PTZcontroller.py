@@ -9,11 +9,8 @@ import urllib
 import requests # to get image from the web
 import shutil # to save it 
 
-
 from lib.camFrame import camFrame
 from lib.ptx import PTZPostAPI
-
-
 
 from dotenv import load_dotenv
 load_dotenv()
@@ -35,16 +32,15 @@ root.title("PTZ controller")
 root.geometry(str((photoSize[0]*4)+10)+"x"+str(3*((photoSize[1]*4)+10))+"+300+150")
 root.resizable(width=False, height=False)
 
-
-cam1Frame = camFrame(root,0,0,photoSize,1)
-cam2Frame = camFrame(root,0,1,photoSize,2)
-cam3Frame = camFrame(root,0,2,photoSize,3)
+list_frames = []
+list_frames.append(camFrame(root,0,0,photoSize,1))
+list_frames.append(camFrame(root,0,1,photoSize,2))
+list_frames.append(camFrame(root,0,2,photoSize,3))
 
 def takeSnapshot(ptz,presetNr):
 	ptz.disableAutofocus()
 	ptz.savePreset(presetNr)
 	ptz.saveSnapshot(presetNr)
-
 
 list_cams = []
 list_cams.append(PTZPostAPI(1,PTZ_1_IP))
@@ -66,22 +62,23 @@ class apiHandler(BaseHTTPRequestHandler):
 		self.send_response(200)
 		self.send_header("Content-type", "text/html")
 		self.end_headers()
-		self.wfile.write(bytes("<html><head><title>Brandaris PTZ controll API</title></head>", "utf-8"))
+		# self.wfile.write(bytes("<html><head><title>Brandaris PTZ controll API</title></head>", "utf-8"))
 
 # CAM = 1, 
 		if(path=="/api/cam/set"):
 			if "cam" in query: 
 				cam = int(query['cam'][0])
-				if cam < 0 or cam > len(list_cams):
+				if cam < 1 or cam > len(list_cams):
 					response = "Cam out of range"
 					return
 			
 				response = "OK"
-				list_cams[cam-1].removeHighlighted()
-				list_cams[cam-1].setTransparency(128)
+				if previewCam!=0:
+					list_frames[previewCam-1].removeHighlighted()
+					list_frames[previewCam-1].setTransparency(128)
 				previewCam = cam
-				list_cams[cam-1].setTransparency(256)
-				list_cams[cam-1].highlight("green")
+				list_frames[cam-1].setTransparency(256)
+				list_frames[cam-1].highlight("green")
 				
 			else:
 				response = "forgot vars"
@@ -95,8 +92,8 @@ class apiHandler(BaseHTTPRequestHandler):
 						response = "Cam out of range"
 						return
 
-					list_cams[cam-1].removeAllHighlightedPresets()
-					list_cams[cam-1].highlightPresetPreview(presetNr)
+					list_frames[cam-1].removeAllHighlightedPresets()
+					list_frames[cam-1].highlightPresetPreview(presetNr)
 					response = "OK"
 					
 				else:
@@ -119,8 +116,8 @@ class apiHandler(BaseHTTPRequestHandler):
 					takeSnapshotThread.setDaemon(True) # Set as a daemon so it will be killed once the main thread is dead.
 					takeSnapshotThread.start()
 					
-					list_cams[cam-1].removeAllHighlightedPresets()
-					list_cams[cam-1].highlightPresetPreview(presetNr)
+					list_frames[cam-1].removeAllHighlightedPresets()
+					list_frames[cam-1].highlightPresetPreview(presetNr)
 				else:
 					response = "forgot vars"
 			else:
@@ -128,17 +125,30 @@ class apiHandler(BaseHTTPRequestHandler):
 
 		elif (path=="/api/preview-to-program"):
 			
-			list_cams[liveCam-1].removeHighlighted()
+			list_frames[liveCam-1].removeHighlighted()
 			liveCam = previewCam
 
-			temp = list_cams[liveCam-1]
-			temp.setTransparency(128)
-			temp.highlight("red")
-			temp.highlightPresetProgramm(temp.getPresetPreview())
-			temp.highlightPresetPreview(temp.getPresetProgramm())
-			temp.highlightPresetPreview(temp.getPresetProgramm())
-			
+			list_frames[liveCam-1].setTransparency(128)
+			list_frames[liveCam-1].highlight("red")
+
+			if previewCam == 1:
+				list_frames[0].highlightPresetProgramm(list_frames[0].getPresetPreview())
+				list_frames[1].highlightPresetPreview(list_frames[1].getPresetProgramm())
+				list_frames[2].highlightPresetPreview(list_frames[2].getPresetProgramm())
+				print("cam 1 to program")
+			elif previewCam == 2:
+				list_frames[0].highlightPresetPreview(list_frames[0].getPresetProgramm())
+				list_frames[1].highlightPresetProgramm(list_frames[1].getPresetPreview())
+				list_frames[2].highlightPresetPreview(list_frames[2].getPresetProgramm())
+				print("cam 2 to program")
+			elif previewCam == 3:
+				list_frames[0].highlightPresetPreview(list_frames[0].getPresetProgramm())
+				list_frames[1].highlightPresetPreview(list_frames[1].getPresetProgramm())
+				list_frames[2].highlightPresetProgramm(list_frames[2].getPresetPreview())
+				print("cam 3 to program")
+
 			previewCam=0
+
 			response = "OK"
 		else:
 			response = "unknow api path"
@@ -153,9 +163,9 @@ def start_server(path, port=8000):
 
 def polAndUpdateImages():
 	# print('pol')
-	cam1Frame.checkAndUpdatePresetImages()
-	cam2Frame.checkAndUpdatePresetImages()
-	cam3Frame.checkAndUpdatePresetImages()
+	list_frames[0].checkAndUpdatePresetImages()
+	list_frames[1].checkAndUpdatePresetImages()
+	list_frames[2].checkAndUpdatePresetImages()
 	threading.Timer(1, polAndUpdateImages).start()
 
 polAndUpdateImagesThread = threading.Thread(name='polAndUpdateImages', target=polAndUpdateImages)
